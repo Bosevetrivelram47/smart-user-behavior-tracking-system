@@ -1,0 +1,28 @@
+# ========================
+# Node / React
+# ========================
+client/node_modules/
+client/.env
+
+# ========================
+# Java / Spring Boot
+# ========================
+server/**/target/
+*.class
+*.jar
+
+# ========================
+# IDE files
+# ========================
+.vscode/
+.idea/
+.project
+.classpath
+.settings/
+*.iml
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+Thumbs.db
