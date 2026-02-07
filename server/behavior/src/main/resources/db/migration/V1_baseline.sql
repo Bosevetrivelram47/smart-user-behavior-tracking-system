@@ -1,0 +1,2 @@
+-- Baseline migration
+-- Schema already created manually
