@@ -26,7 +26,13 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(NotificationNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handleExisted(NotificationNotFoundException ex) {
+	public ResponseEntity<Map<String, String>> handleNotificatonNotFound(NotificationNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
 	}
+
+	@ExceptionHandler(TaskAlreadyCompletedException.class)
+	public ResponseEntity<Map<String, String>> handleTaskCompleted(TaskAlreadyCompletedException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+	}
+
 }
