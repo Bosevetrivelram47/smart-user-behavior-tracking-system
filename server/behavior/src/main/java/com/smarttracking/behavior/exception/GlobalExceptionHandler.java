@@ -19,4 +19,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleTaskNotFound(TaskNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
 	}
+
+	@ExceptionHandler(ExistedException.class)
+	public ResponseEntity<Map<String, String>> handleExisted(ExistedException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
+	}
+
+	@ExceptionHandler(NotificationNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handleExisted(NotificationNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+	}
 }
