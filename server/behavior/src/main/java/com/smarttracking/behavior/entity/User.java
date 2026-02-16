@@ -31,7 +31,7 @@ public class User {
 	@Column(nullable = false)
 	private String role;
 
-	@Column(name = "is_active")
+	@Column(name = "is_active", nullable = false)
 	private Boolean isActive = true;
 
 	// DB will manage the createdAt
@@ -43,12 +43,11 @@ public class User {
 	}
 
 	// Parameterized Constructor
-	public User(String name, String email, String password, String role, Boolean isActive) {
+	public User(String name, String email, String password, String role) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.role = role;
-		this.isActive = isActive;
 	}
 
 	// Getters and Setters
