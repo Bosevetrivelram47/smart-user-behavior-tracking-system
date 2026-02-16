@@ -1,9 +1,12 @@
 package com.smarttracking.behavior.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.smarttracking.behavior.dto.user.UserRequestDto;
+import com.smarttracking.behavior.dto.user.UserResponseDto;
 import com.smarttracking.behavior.entity.User;
 import com.smarttracking.behavior.exception.UserNotFoundException;
 import com.smarttracking.behavior.repository.UserRepository;
@@ -20,47 +23,63 @@ public class UserService {
 		this.userActivityLogService = userActivityLogService;
 	}
 
+	// DTO response
+	public UserResponseDto mapToResponse(User user) {
+		UserResponseDto dto = new UserResponseDto();
+
+		dto.setUserId(user.getUserId());
+		dto.setName(user.getName());
+		dto.setEmail(user.getEmail());
+		dto.setRole(user.getRole());
+		dto.setActive(user.getIsActive());
+
+		return dto;
+	}
+
 	// Creating new User
-	public User createUser(User user) {
+	public UserResponseDto createUser(UserRequestDto dto) {
+		User user = new User(dto.getName(), dto.getEmail(), dto.getPassword(), dto.getRole());
+
 		User savedUser = userRepository.save(user);
 
 		userActivityLogService.logActivity(savedUser, "CREATE_USER", "USER");
 
-		return savedUser;
+		return mapToResponse(savedUser);
 
 	}
 
 	// Getting the users by role
-	public List<User> getUsersByRole(String role) {
-		return userRepository.findAllByRole(role);
+	public List<UserResponseDto> getUsersByRole(String role) {
+		return userRepository.findAllByRole(role).stream().map(this::mapToResponse).toList();
 	}
 
 	// Getting particular user
-	public User getUserById(Long userId) throws UserNotFoundException {
-		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+	public UserResponseDto getUserById(Long userId) throws UserNotFoundException {
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+		return mapToResponse(user);
 	}
 
 	// Getting all users
-	public List<User> getAllUsers() {
-		return userRepository.findAll();
+	public List<UserResponseDto> getAllUsers() {
+		return userRepository.findAll().stream().map(this::mapToResponse).toList();
 	}
 
 	// Activate the user
-	public User activateUser(Long userId) throws UserNotFoundException {
-		User user = getUserById(userId);
+	public UserResponseDto activateUser(Long userId) throws UserNotFoundException {
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 		user.setIsActive(true);
 		userActivityLogService.logActivity(user, "ACTIVATE_USER", "USER");
 
-		return userRepository.save(user);
+		return mapToResponse(userRepository.save(user));
 	}
 
 	// Deactivate the user
-	public User deactivateUser(Long userId) throws UserNotFoundException {
-		User user = getUserById(userId);
+	public UserResponseDto deactivateUser(Long userId) throws UserNotFoundException {
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 		user.setIsActive(false);
 		userActivityLogService.logActivity(user, "DEACTIVATE_USER", "USER");
 
-		return userRepository.save(user);
+		return mapToResponse(userRepository.save(user));
 	}
 
 	// Check for the user exists or not
@@ -69,8 +88,8 @@ public class UserService {
 	}
 
 	// Getting all active users
-	public List<User> getAllActiveUsers() {
-		return userRepository.findAllByIsActiveTrue();
+	public List<UserResponseDto> getAllActiveUsers() {
+		return userRepository.findAllByIsActiveTrue().stream().map(this::mapToResponse).toList();
 	}
 
 }
