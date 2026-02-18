@@ -1,7 +1,6 @@
 package com.smarttracking.behavior.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -57,6 +56,11 @@ public class UserService {
 	public UserResponseDto getUserById(Long userId) throws UserNotFoundException {
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 		return mapToResponse(user);
+	}
+
+	// For other internal services
+	public User getUserEntityById(Long userId) throws UserNotFoundException {
+		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 	}
 
 	// Getting all users
