@@ -35,8 +35,8 @@ public class TaskResolutionService {
 	@Transactional
 	public TaskResolution resolveTask(Long taskId, Long resolvedByUserId, String remarks)
 			throws TaskNotFoundException, UserNotFoundException, TaskAlreadyCompletedException {
-		Task task = taskService.getTaskById(taskId);
-		User resolvedBy = userService.getUserById(resolvedByUserId);
+		Task task = taskService.getTaskEntityById(taskId);
+		User resolvedBy = userService.getUserEntityById(resolvedByUserId);
 
 		if (task.getStatus() == TaskStatus.COMPLETED) {
 			throw new TaskAlreadyCompletedException("Task is already completed");

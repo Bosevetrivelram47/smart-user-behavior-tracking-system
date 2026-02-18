@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.smarttracking.behavior.dto.task.TaskRequestDto;
+import com.smarttracking.behavior.dto.task.TaskResponseDto;
 import com.smarttracking.behavior.entity.Task;
 import com.smarttracking.behavior.entity.TaskStatus;
 import com.smarttracking.behavior.entity.User;
@@ -26,44 +28,67 @@ public class TaskService {
 		this.userActivityLogService = userActivityLogService;
 	}
 
-	// Task creation
-	public Task createTask(Task task, Long creatorUserId) throws UserNotFoundException {
-		User creator = userService.getUserById(creatorUserId);
+	// DTO response
+	public TaskResponseDto mapToResponse(Task task) {
+		TaskResponseDto dto = new TaskResponseDto();
+		dto.setTaskId(task.getTaskId());
+		dto.setTitle(task.getTitle());
+		dto.setDescription(task.getDescription());
+		dto.setPriority(task.getPriority());
+		dto.setStatus(task.getStatus());
+		dto.setCreatedByUserId(task.getCreatedBy().getUserId());
+		dto.setCreatedByUserName(task.getCreatedBy().getName());
+		dto.setCreatedAt(task.getCreatedAt());
 
-		task.setCreatedBy(creator);
-		task.setStatus(TaskStatus.PENDING);
+		return dto;
+	}
+
+	// Task creation
+	public TaskResponseDto createTask(TaskRequestDto dto) throws UserNotFoundException {
+		User creator = userService.getUserEntityById(dto.getCreatedByUserId());
+
+		Task task = new Task(dto.getTitle(), dto.getDescription(), dto.getPriority(), TaskStatus.PENDING, creator);
 
 		Task savedTask = taskRepository.save(task);
 
 		userActivityLogService.logActivity(creator, "CREATE_TASK", "TASK");
 
-		return savedTask;
+		return mapToResponse(savedTask);
 	}
 
 	// Getting particular task
-	public Task getTaskById(Long taskId) throws TaskNotFoundException {
-		return taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found"));
+	public TaskResponseDto getTaskById(Long taskId) throws TaskNotFoundException {
+		Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+		return mapToResponse(task);
+	}
+
+	public Task getTaskEntityById(Long taskId) throws TaskNotFoundException {
+		Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+		return task;
 	}
 
 	// Getting all tasks
-	public List<Task> getAllTasks() {
-		return taskRepository.findAll();
+	public List<TaskResponseDto> getAllTasks() {
+		return taskRepository.findAll().stream().map(this::mapToResponse).toList();
 	}
 
 	// Getting the task created by the particular user
-	public List<Task> getTasksCreatedBy(Long userId) {
-		return taskRepository.findAllByCreatedBy_UserId(userId);
+	public List<TaskResponseDto> getTasksCreatedBy(Long userId) {
+		return taskRepository.findAllByCreatedBy_UserId(userId).stream().map(this::mapToResponse).toList();
 	}
 
 	// Getting tasks by status
-	public List<Task> getTasksByStatus(TaskStatus status) {
-		return taskRepository.findAllByStatus(status);
+	public List<TaskResponseDto> getTasksByStatus(TaskStatus status) {
+		return taskRepository.findAllByStatus(status).stream().map(this::mapToResponse).toList();
 	}
 
 	// To update the task status
-	public Task updateTaskStatus(Long taskId, TaskStatus status, Long updatedByUserId)
+	public TaskResponseDto updateTaskStatus(Long taskId, TaskStatus status, Long updatedByUserId)
 			throws TaskNotFoundException, UserNotFoundException {
-		Task task = getTaskById(taskId);
+		Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found"));
+		User creator = userService.getUserEntityById(updatedByUserId);
 
 		if (task.getStatus() != status) {
 			task.setStatus(status);
@@ -71,9 +96,9 @@ public class TaskService {
 
 		Task updatedTask = taskRepository.save(task);
 
-		userActivityLogService.logActivity(userService.getUserById(updatedByUserId), "UPDATE_TASK_STATUS", "TASK");
+		userActivityLogService.logActivity(creator, "UPDATE_TASK_STATUS", "TASK");
 
-		return updatedTask;
+		return mapToResponse(updatedTask);
 	}
 
 	// Check if the task exists
