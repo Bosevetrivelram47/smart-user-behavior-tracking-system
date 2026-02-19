@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 @RestController
 @Validated
 @RequestMapping("/api/assignments")
-@CrossOrigin(origins = "http://localhost: 5173")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TaskAssignmentController {
 
 	private TaskAssignmentService taskAssignmentService;
