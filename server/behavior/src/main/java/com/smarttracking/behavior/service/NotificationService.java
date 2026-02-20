@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.smarttracking.behavior.dto.notification.NotificationResponseDto;
 import com.smarttracking.behavior.entity.Notification;
 import com.smarttracking.behavior.entity.User;
 import com.smarttracking.behavior.exception.NotificationNotFoundException;
@@ -17,31 +18,49 @@ public class NotificationService {
 		this.notificationRepository = notificationRepository;
 	}
 
+	// DTO response
+	public NotificationResponseDto mapToResponse(Notification notification) {
+		NotificationResponseDto dto = new NotificationResponseDto();
+
+		dto.setUserId(notification.getUser().getUserId());
+		dto.setNotificationId(notification.getNotificationId());
+		dto.setMessage(notification.getMessage());
+		dto.setRead(notification.getIsRead());
+		dto.setCreatedAt(notification.getCreatedAt());
+
+		return dto;
+	}
+
 	// Created notification
-	public Notification createNotification(User user, String message) {
+	public NotificationResponseDto createNotification(User user, String message) {
 		Notification notification = new Notification(user, message);
 
-		return notificationRepository.save(notification);
+		return mapToResponse(notificationRepository.save(notification));
 	}
 
 	// Get notification by user
-	public List<Notification> getAllNotificationsByUser(Long userId) {
-		return notificationRepository.findAllByUser_UserId(userId);
+	public List<NotificationResponseDto> getAllNotificationsByUser(Long userId) {
+		return notificationRepository.findAllByUser_UserId(userId).stream().map(this::mapToResponse).toList();
 	}
 
 	// Get unread notifications
-	public List<Notification> getUnreadNotifications(Long userId) {
-		return notificationRepository.findAllByUser_UserIdAndIsReadIsFalse(userId);
+	public List<NotificationResponseDto> getUnreadNotifications(Long userId) {
+		return notificationRepository.findAllByUser_UserIdAndIsReadIsFalse(userId).stream().map(this::mapToResponse)
+				.toList();
 	}
 
 	// Mark the notification as read
-	public Notification markAsRead(Long notificationId) throws NotificationNotFoundException {
+	public NotificationResponseDto markAsRead(Long notificationId) throws NotificationNotFoundException {
 		Notification notification = notificationRepository.findById(notificationId)
 				.orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
 
 		notification.setIsRead(true);
 
-		return notificationRepository.save(notification);
+		return mapToResponse(notificationRepository.save(notification));
+	}
+
+	public long getUnreadCount(Long userId) {
+		return notificationRepository.countByUser_UserIdAndIsReadIsFalse(userId);
 	}
 
 }
