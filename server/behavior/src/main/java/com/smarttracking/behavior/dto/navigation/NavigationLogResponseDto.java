@@ -2,7 +2,7 @@ package com.smarttracking.behavior.dto.navigation;
 
 import java.time.LocalDateTime;
 
-public class NavigationResponseDto {
+public class NavigationLogResponseDto {
 
 	private Long navigationId;
 	private Long userId;

@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.smarttracking.behavior.dto.navigation.NavigationRequestDto;
-import com.smarttracking.behavior.dto.navigation.NavigationResponseDto;
+import com.smarttracking.behavior.dto.navigation.NavigationLogRequestDto;
+import com.smarttracking.behavior.dto.navigation.NavigationLogResponseDto;
+import com.smarttracking.behavior.dto.navigation.PageAnalyticsDto;
 import com.smarttracking.behavior.entity.NavigationLog;
 import com.smarttracking.behavior.entity.User;
 import com.smarttracking.behavior.exception.UserNotFoundException;
@@ -24,8 +25,8 @@ public class NavigationLogService {
 	}
 
 	// DTO response
-	public NavigationResponseDto mapToResponse(NavigationLog log) {
-		NavigationResponseDto dto = new NavigationResponseDto();
+	public NavigationLogResponseDto mapToResponse(NavigationLog log) {
+		NavigationLogResponseDto dto = new NavigationLogResponseDto();
 
 		dto.setNavigationId(log.getNavigationId());
 		dto.setUserId(log.getUser().getUserId());
@@ -38,7 +39,7 @@ public class NavigationLogService {
 	}
 
 	// Logs the navigation
-	public NavigationResponseDto logNavigation(NavigationRequestDto dto) throws UserNotFoundException {
+	public NavigationLogResponseDto logNavigation(NavigationLogRequestDto dto) throws UserNotFoundException {
 		User user = userService.getUserEntityById(dto.getUserId());
 
 		NavigationLog log = new NavigationLog(user, dto.getPageName(), dto.getTimeSpentSeconds());
@@ -49,13 +50,24 @@ public class NavigationLogService {
 	}
 
 	// Get logs by user
-	public List<NavigationResponseDto> getLogByUser(Long userId) {
-		return navigationLogRepository.findByUser_UserId(userId).stream().map(this::mapToResponse).toList();
+	public List<NavigationLogResponseDto> getLogByUser(Long userId) {
+		return navigationLogRepository.findAllByUser_UserId(userId).stream().map(this::mapToResponse).toList();
 	}
 
 	// Gives all logs
-	public List<NavigationResponseDto> getAllLogs() {
+	public List<NavigationLogResponseDto> getAllLogs() {
 		return navigationLogRepository.findAll().stream().map(this::mapToResponse).toList();
+	}
+
+	// Get most visited pages
+	public List<PageAnalyticsDto> getMostVisitedPages() {
+		return navigationLogRepository.getMostVisitedPages().stream().map(obj -> {
+			PageAnalyticsDto dto = new PageAnalyticsDto();
+			dto.setPageName((String) obj[0]);
+			dto.setVisitCount((Long) obj[1]);
+
+			return dto;
+		}).toList();
 	}
 
 }
