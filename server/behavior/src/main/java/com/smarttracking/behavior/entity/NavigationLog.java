@@ -73,8 +73,8 @@ public class NavigationLog {
 		return timeSpentSeconds;
 	}
 
-	public void setTimeSpentSecond(Integer timeSpentSecond) {
-		this.timeSpentSeconds = timeSpentSecond;
+	public void setTimeSpentSeconds(Integer timeSpentSeconds) {
+		this.timeSpentSeconds = timeSpentSeconds;
 	}
 
 	public LocalDateTime getVisitedAt() {

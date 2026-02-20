@@ -1,9 +1,10 @@
 package com.smarttracking.behavior.dto.navigation;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class NavigationRequestDto {
+public class NavigationLogRequestDto {
 
 	@NotNull
 	private Long userId;
@@ -12,6 +13,7 @@ public class NavigationRequestDto {
 	private String pageName;
 
 	@NotNull
+	@Min(0)
 	private Integer timeSpentSeconds;
 
 	public Long getUserId() {
