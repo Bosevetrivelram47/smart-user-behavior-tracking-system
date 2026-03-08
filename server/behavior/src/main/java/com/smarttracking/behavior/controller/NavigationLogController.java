@@ -3,6 +3,7 @@ package com.smarttracking.behavior.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +38,13 @@ public class NavigationLogController {
 		return ResponseEntity.ok(navigationLogService.logNavigation(dto));
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<NavigationLogResponseDto>> getLogByUser(@PathVariable Long userId) {
 		return ResponseEntity.ok(navigationLogService.getLogByUser(userId));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<NavigationLogResponseDto>> getAllLogs() {
 		return ResponseEntity.ok(navigationLogService.getAllLogs());

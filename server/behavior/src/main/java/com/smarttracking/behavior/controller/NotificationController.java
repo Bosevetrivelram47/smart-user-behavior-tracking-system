@@ -3,6 +3,7 @@ package com.smarttracking.behavior.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class NotificationController {
 		this.notificationService = notificationService;
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<NotificationResponseDto>> getAllNotificationsByUser(@PathVariable Long userId) {
 		return ResponseEntity.ok(notificationService.getAllNotificationsByUser(userId));

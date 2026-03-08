@@ -2,6 +2,7 @@ package com.smarttracking.behavior.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.smarttracking.behavior.dto.user.UserRequestDto;
@@ -16,10 +17,13 @@ public class UserService {
 	// Dependency Injection
 	private final UserRepository userRepository;
 	private final UserActivityLogService userActivityLogService;
+	private final PasswordEncoder passwordEncoder;
 
-	public UserService(UserRepository userRepository, UserActivityLogService userActivityLogService) {
+	public UserService(UserRepository userRepository, UserActivityLogService userActivityLogService,
+			PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.userActivityLogService = userActivityLogService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	// DTO response
@@ -37,7 +41,10 @@ public class UserService {
 
 	// Creating new User
 	public UserResponseDto createUser(UserRequestDto dto) {
-		User user = new User(dto.getName(), dto.getEmail(), dto.getPassword(), dto.getRole());
+
+		String encodedPassword = passwordEncoder.encode(dto.getPassword());
+
+		User user = new User(dto.getName(), dto.getEmail(), encodedPassword, dto.getRole());
 
 		User savedUser = userRepository.save(user);
 

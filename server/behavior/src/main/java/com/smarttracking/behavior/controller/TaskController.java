@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,7 @@ public class TaskController {
 		this.taskService = taskService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto dto)
 			throws UserNotFoundException {
@@ -46,6 +48,7 @@ public class TaskController {
 		return ResponseEntity.ok(taskService.getTaskById(id));
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping
 	public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
 		return ResponseEntity.ok(taskService.getAllTasks());
