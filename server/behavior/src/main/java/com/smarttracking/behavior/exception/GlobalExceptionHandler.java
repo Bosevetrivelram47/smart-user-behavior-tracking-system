@@ -53,6 +53,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(errors);
 	}
 
+	@ExceptionHandler(WrongPasswordException.class)
+	public ResponseEntity<Map<String, String>> handleWrongPasswordException(WrongPasswordException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
 		ex.printStackTrace();

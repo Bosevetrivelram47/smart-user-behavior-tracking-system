@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto) {
 		UserResponseDto createdUser = userService.createUser(dto);
@@ -44,6 +46,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<UserResponseDto>> getAllUsers() {
 		return ResponseEntity.ok(userService.getAllUsers());
@@ -54,11 +57,13 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUsersByRole(role));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}/deactivate")
 	public ResponseEntity<UserResponseDto> deactivateUser(@PathVariable Long id) throws UserNotFoundException {
 		return ResponseEntity.ok(userService.deactivateUser(id));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}/activate")
 	public ResponseEntity<UserResponseDto> activateUser(@PathVariable Long id) throws UserNotFoundException {
 		return ResponseEntity.ok(userService.activateUser(id));
