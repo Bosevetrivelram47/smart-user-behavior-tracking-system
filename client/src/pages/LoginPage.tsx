@@ -110,11 +110,6 @@ export default function LoginPage() {
                         </Alert>
                     )}
 
-                    {/* Demo creds hint */}
-                    <Alert severity="info" sx={{ mb: 3, borderRadius: 2, fontSize: '0.75rem' }}>
-                        <strong>Admin:</strong> admin@demo.com / admin123 &nbsp;|&nbsp; <strong>User:</strong> user@demo.com / user123
-                    </Alert>
-
                     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                             <CustomTextField

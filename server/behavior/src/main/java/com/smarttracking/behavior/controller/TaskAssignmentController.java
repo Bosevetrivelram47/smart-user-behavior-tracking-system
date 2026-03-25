@@ -34,7 +34,7 @@ public class TaskAssignmentController {
 		this.taskAssignmentService = taskAssignmentService;
 	}
 
-	@PreAuthorize("hasAnyRole('ADMIN, MANAGER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	@PostMapping
 	public ResponseEntity<TaskAssignmentResponseDto> assignTask(@Valid @RequestBody TaskAssignmentRequestDto dto)
 			throws TaskNotFoundException, UserNotFoundException, ExistedException {
@@ -49,5 +49,10 @@ public class TaskAssignmentController {
 	@GetMapping("/task/{taskId}")
 	public ResponseEntity<List<TaskAssignmentResponseDto>> getAssignmentsForTask(@PathVariable Long taskId) {
 		return ResponseEntity.ok(taskAssignmentService.getAssignmentsForTask(taskId));
+	}
+
+	@GetMapping
+	public ResponseEntity<List<TaskAssignmentResponseDto>> getAllAssignments() {
+		return ResponseEntity.ok(taskAssignmentService.getAllAssignments());
 	}
 }

@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { STORAGE_KEYS, MOCK_DELAY } from '../../utils/constants';
+import api from '../../utils/api';
+import { STORAGE_KEYS } from '../../utils/constants';
 
 export interface AuthUser {
     id: string;
     name: string;
     email: string;
     role: 'ADMIN' | 'USER';
-    avatar?: string;
 }
 
 interface AuthState {
@@ -28,35 +28,41 @@ const initialState: AuthState = {
 
 export const loginThunk = createAsyncThunk(
     'auth/login',
-    async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+    async (
+        credentials: { email: string; password: string },
+        { rejectWithValue }
+    ) => {
         try {
-            await new Promise((r) => setTimeout(r, MOCK_DELAY));
-            // Mock authentication – in production replace with api.post('/auth/login', credentials)
-            if (credentials.email === 'admin@demo.com' && credentials.password === 'admin123') {
-                const payload = {
-                    token: 'mock-jwt-token-admin-xyz',
-                    user: { id: '1', name: 'Alex Admin', email: credentials.email, role: 'ADMIN' as const, avatar: '' },
-                };
-                localStorage.setItem(STORAGE_KEYS.TOKEN, payload.token);
-                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(payload.user));
-                return payload;
-            } else if (credentials.email === 'user@demo.com' && credentials.password === 'user123') {
-                const payload = {
-                    token: 'mock-jwt-token-user-abc',
-                    user: { id: '2', name: 'Sam User', email: credentials.email, role: 'USER' as const, avatar: '' },
-                };
-                localStorage.setItem(STORAGE_KEYS.TOKEN, payload.token);
-                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(payload.user));
-                return payload;
-            } else {
-                return rejectWithValue('Invalid email or password.');
+
+            const response = await api.post('/auth/login', credentials);
+
+            const data = response.data;
+
+            const payload = {
+                token: data.token,
+                user: {
+                    id: data.userId,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role
+                }
+            };
+
+            localStorage.setItem(STORAGE_KEYS.TOKEN, payload.token);
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(payload.user));
+
+            return payload;
+
+        } catch (error: any) {
+
+            if (error.response?.data?.message) {
+                return rejectWithValue(error.response.data.message);
             }
-        } catch {
-            return rejectWithValue('Network error. Please try again.');
+
+            return rejectWithValue('Login failed. Please try again.');
         }
     }
 );
-
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -65,6 +71,7 @@ const authSlice = createSlice({
             state.user = null;
             state.token = null;
             state.error = null;
+
             localStorage.removeItem(STORAGE_KEYS.TOKEN);
             localStorage.removeItem(STORAGE_KEYS.USER);
         },
@@ -91,4 +98,5 @@ const authSlice = createSlice({
 });
 
 export const { logout, clearError } = authSlice.actions;
+
 export default authSlice.reducer;

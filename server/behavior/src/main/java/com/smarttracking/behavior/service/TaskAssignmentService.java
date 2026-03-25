@@ -81,4 +81,8 @@ public class TaskAssignmentService {
 	public List<TaskAssignmentResponseDto> getAssignmentsForTask(Long taskId) {
 		return taskAssignmentRepository.findAllByTask_TaskId(taskId).stream().map(this::mapToResponse).toList();
 	}
+
+	public List<TaskAssignmentResponseDto> getAllAssignments() {
+		return taskAssignmentRepository.findAll().stream().map(this::mapToResponse).toList();
+	}
 }
