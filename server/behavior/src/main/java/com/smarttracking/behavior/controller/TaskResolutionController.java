@@ -38,6 +38,11 @@ public class TaskResolutionController {
 		return ResponseEntity.ok(taskResolutionService.resolveTask(dto));
 	}
 
+	@GetMapping
+	public ResponseEntity<List<TaskResolutionResponseDto>> getAllResolutions() {
+		return ResponseEntity.ok(taskResolutionService.getAllResolutions());
+	}
+
 	@GetMapping("/task/{taskId}")
 	public ResponseEntity<List<TaskResolutionResponseDto>> getResolutionForTask(@PathVariable Long taskId) {
 		return ResponseEntity.ok(taskResolutionService.getResolutionForTask(taskId));

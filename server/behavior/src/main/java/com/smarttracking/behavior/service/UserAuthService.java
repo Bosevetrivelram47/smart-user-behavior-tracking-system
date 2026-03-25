@@ -40,7 +40,7 @@ public class UserAuthService {
 
 		String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
 
-		return new LoginResponseDto(token, user.getUserId(), user.getEmail(), user.getRole());
+		return new LoginResponseDto(token, user.getUserId(), user.getName(), user.getEmail(), user.getRole());
 	}
 
 }

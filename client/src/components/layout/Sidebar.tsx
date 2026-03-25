@@ -122,7 +122,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                                 fontSize: '0.9rem', fontWeight: 700, color: '#fff',
                             }}
                         >
-                            {user.name.charAt(0)}
+                            {user?.name?.charAt(0) || 'U'}
                         </Avatar>
                         <Box>
                             <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600, lineHeight: 1.2 }}>

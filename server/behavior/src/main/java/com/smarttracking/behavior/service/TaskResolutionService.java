@@ -89,4 +89,8 @@ public class TaskResolutionService {
 		return taskResolutionRepository.findAllByTask_TaskId(taskId).stream().map(this::mapToResponse).toList();
 	}
 
+	public List<TaskResolutionResponseDto> getAllResolutions() {
+		return taskResolutionRepository.findAll().stream().map(this::mapToResponse).toList();
+	}
+
 }

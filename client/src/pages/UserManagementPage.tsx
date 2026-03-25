@@ -18,10 +18,10 @@ import EmptyState from '../components/common/EmptyState';
 import ErrorAlert from '../components/common/ErrorAlert';
 
 const schema = yup.object({
-    name: yup.string().required('Name is required').min(2),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    role: yup.mixed<'ADMIN' | 'USER'>().oneOf(['ADMIN', 'USER']).required(),
-    active: yup.boolean().required(),
+    name: yup.string().required().min(2),
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+    role: yup.mixed<'ADMIN' | 'USER'>().oneOf(['ADMIN','USER']).required(),
 });
 type FormData = yup.InferType<typeof schema>;
 
@@ -35,7 +35,7 @@ export default function UserManagementPage() {
 
     const { control, register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
-        defaultValues: { role: 'USER', active: true },
+        defaultValues: { role: 'USER'},
     });
 
     React.useEffect(() => { dispatch(fetchUsers()); }, [dispatch]);
@@ -47,11 +47,17 @@ export default function UserManagementPage() {
         return matchSearch && matchRole;
     });
 
-    const handleToggle = (id: string) => dispatch(toggleUserActive(id));
+    const handleToggle = (user: AppUser) =>
+    dispatch(toggleUserActive({ id: user.id, active: user.active }));
 
     const onCreateSubmit = async (data: FormData) => {
         setCreating(true);
-        await dispatch(createUser({ name: data.name, email: data.email, role: data.role!, active: data.active! }));
+        await dispatch(createUser({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            role: data.role
+        }));
         setCreating(false);
         setCreateOpen(false);
         reset();
@@ -74,15 +80,13 @@ export default function UserManagementPage() {
                 />
             ),
         },
-        { field: 'createdAt', headerName: 'Joined', width: 120 },
-        { field: 'tasksCount', headerName: 'Tasks', width: 80, type: 'number' },
         {
             field: 'active', headerName: 'Status', width: 100,
             renderCell: ({ row }) => (
                 <Tooltip title={row.active ? 'Deactivate user' : 'Activate user'}>
                     <Switch
                         checked={row.active}
-                        onChange={() => handleToggle(row.id)}
+                        onChange={() => handleToggle(row)}
                         size="small"
                         color="success"
                     />
@@ -167,6 +171,15 @@ export default function UserManagementPage() {
                                     </Select>
                                 </FormControl>
                             )}
+                        />
+
+                        <TextField
+                            label="Password"
+                            type="password"
+                            fullWidth
+                            {...register('password')}
+                            error={Boolean(errors.password)}
+                            helperText={errors.password?.message}
                         />
                     </Box>
                 </DialogContent>
