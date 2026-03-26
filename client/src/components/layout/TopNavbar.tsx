@@ -8,8 +8,7 @@ import {
     LightMode as LightIcon,
     DarkMode as DarkIcon,
     Logout as LogoutIcon,
-    AccountCircle as ProfileIcon,
-    Menu as MenuIcon,
+    AccountCircle as ProfileIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';

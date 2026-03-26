@@ -1,4 +1,3 @@
-import React from 'react';
 import { Chip, useTheme } from '@mui/material';
 import { STATUS_COLORS, STATUS_COLORS_DARK } from '../../utils/constants';
 

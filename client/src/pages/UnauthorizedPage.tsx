@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { LockOutlined as LockIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';

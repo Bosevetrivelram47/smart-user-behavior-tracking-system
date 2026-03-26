@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, AlertTitle, Collapse, IconButton } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 

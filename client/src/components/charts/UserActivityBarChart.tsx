@@ -1,7 +1,6 @@
-import React from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-    Legend, ResponsiveContainer, Cell,
+    Legend, ResponsiveContainer
 } from 'recharts';
 import { useTheme } from '@mui/material';
 import type { AppUser } from '../../features/users/userSlice';
@@ -18,9 +17,9 @@ export default function UserActivityBarChart({ users, tasks }: Props) {
 
     const data = users.slice(0, 6).map((u) => ({
         name: u.name.split(' ')[0],
-        completed: tasks.filter((t) => t.assignedTo === u.id && t.status === 'COMPLETED').length,
-        inProgress: tasks.filter((t) => t.assignedTo === u.id && t.status === 'IN_PROGRESS').length,
-        pending: tasks.filter((t) => t.assignedTo === u.id && t.status === 'PENDING').length,
+        completed: tasks.filter((t) => t.assignedToUserId === u.id && t.status === 'COMPLETED').length,
+        inProgress: tasks.filter((t) => t.assignedToUserId === u.id && t.status === 'IN_PROGRESS').length,
+        pending: tasks.filter((t) => t.assignedToUserId === u.id && t.status === 'PENDING').length,
     }));
 
     const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
