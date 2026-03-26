@@ -10,6 +10,8 @@ export interface Task {
   createdByUserId: number;
   createdByUserName: string;
   createdAt: string;
+  assignedToUserId?: number;   // ✅ ADD
+assignedToUserName?: string;
 }
 
 interface TaskState {
@@ -108,7 +110,7 @@ const taskSlice = createSlice({
         state.pagination.total += 1;
       })
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
-        const task = state.data.find((t) => t.id === action.payload.id);
+        const task = state.data.find((t) => t.taskId === action.payload.id);
         if (task) task.status = action.payload.status;
       });
   },

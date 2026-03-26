@@ -20,10 +20,8 @@ import {
   DialogActions,
   TextField,
   Chip,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
-import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";

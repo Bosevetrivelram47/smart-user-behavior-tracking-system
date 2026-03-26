@@ -23,7 +23,10 @@ import {
   TableContainer,
   Chip,
 } from "@mui/material";
-import { fetchAssignments } from "../features/assignments/assignmentSlice";
+import {
+  fetchAssignments,
+  type Assignment,
+} from "../features/assignments/assignmentSlice";
 import { CheckCircle as ResolveIcon } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -62,6 +65,11 @@ export default function TaskResolutionPage() {
   const [open, setOpen] = React.useState(false);
   const [resolving, setResolving] = React.useState(false);
 
+  type TaskOption = {
+    taskId: number;
+    title: string;
+  };
+
   const {
     control,
     register,
@@ -76,20 +84,24 @@ export default function TaskResolutionPage() {
     dispatch(fetchResolutions());
     dispatch(fetchTasks());
     dispatch(fetchUsers());
-    dispatch(fetchAssignments()); // add this
-  }, [dispatch]);
+    if (currentUser?.id) {
+      dispatch(fetchAssignments(Number(currentUser.id)));
+    } // add this
+  }, [dispatch, currentUser]);
 
   const resolveableTasks =
     currentUser?.role === "ADMIN"
       ? assignments
       : assignments.filter(
-          (a: any) => a.assignedToUserId === Number(currentUser?.id),
+          (a: Assignment) => a.assignedToUserId === Number(currentUser?.id),
         );
 
-  const tasksForDropdown = resolveableTasks.map((a: any) => ({
-    taskId: a.taskId,
-    title: a.taskTitle,
-  }));
+  const tasksForDropdown: TaskOption[] = resolveableTasks.map(
+    (a: Assignment) => ({
+      taskId: a.taskId,
+      title: a.taskTitle,
+    }),
+  );
 
   const onSubmit = async (data: FormData) => {
     setResolving(true);
@@ -265,7 +277,7 @@ export default function TaskResolutionPage() {
                 <FormControl fullWidth error={Boolean(errors.taskId)}>
                   <InputLabel>Select Task to Resolve</InputLabel>
                   <Select {...field} label="Select Task to Resolve">
-                    {tasksForDropdown.map((t: any) => (
+                    {tasksForDropdown.map((t: TaskOption) => (
                       <MenuItem key={t.taskId} value={t.taskId}>
                         {t.title}
                       </MenuItem>

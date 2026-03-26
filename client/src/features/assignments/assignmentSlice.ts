@@ -36,9 +36,9 @@ const initialState: AssignmentState = {
 
 export const fetchAssignments = createAsyncThunk(
   "assignments/fetchAll",
-  async () => {
-    const response = await api.get("/assignments");
-    return response.data;
+  async (userId: number) => {
+    const res = await api.get(`/assignments/user/${userId}`);
+    return res.data;
   }
 );
 

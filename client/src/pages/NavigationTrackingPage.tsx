@@ -217,6 +217,12 @@ export default function NavigationTrackingPage() {
           />
         ) : (
           <DataGrid
+            sx={{
+              "& .MuiDataGrid-columnHeaders": {
+                borderRadius: "16px 16px 0 0",
+              },
+              border: "none"
+            }}
             rows={filtered}
             columns={columns}
             getRowId={(row) => row.navigationId}
@@ -224,7 +230,6 @@ export default function NavigationTrackingPage() {
             disableRowSelectionOnClick
             initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
             pageSizeOptions={[5, 10, 25]}
-            sx={{ border: "none" }}
           />
         )}
       </Card>
