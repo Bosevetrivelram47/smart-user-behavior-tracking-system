@@ -10,7 +10,7 @@ client/.env
 server/**/target/
 *.class
 *.jar
-server/behavior/src/main/resources/application.properties
+# server/behavior/src/main/resources/application.properties
 
 # ========================
 # IDE files
